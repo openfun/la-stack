@@ -1,0 +1,29 @@
+---
+- name: Install UFW
+  apt:
+    name: ufw
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Open general ports
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - "{{ ports | default(['22']) }}"
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Open ports by IP
+  ufw:
+    rule: allow
+    src:  "{{ item.value.ip }}"
+    port: "{{ item.value.port }}"
+    proto: tcp
+  with_dict: "{{ port_ips | default({}) }}"
