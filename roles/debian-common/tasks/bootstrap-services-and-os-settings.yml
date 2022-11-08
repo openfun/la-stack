@@ -1,7 +1,7 @@
 ---
 - name: Install required packages
   apt:
-    name: "{{ fun_debian_common_packages }}"
+    name: "{{ debian_common_packages }}"
     state: latest
     update_cache: yes
     cache_valid_time: 3600
@@ -24,7 +24,7 @@
 
 - name: Set the time zone
   timezone:
-    name: "{{ fun_debian_common_ntp_timezone }}"
+    name: "{{ debian_common_ntp_timezone }}"
 
 - name: Enable NTP
   command: timedatectl set-ntp true

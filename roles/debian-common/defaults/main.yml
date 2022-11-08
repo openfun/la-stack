@@ -1,0 +1,48 @@
+---
+# Compatible with AWS images of Debian and Ubuntu
+debian_common_admin_user: "{{ 'admin' if (ansible_distribution == 'Debian') else 'ubuntu' }}"
+debian_common_regular_user_group: "{{ debian_common_regular_user if (debian_common_regular_user is defined) else '' }}"
+
+# Time zone
+debian_common_ntp_timezone: Europe/Paris
+
+# UFW
+debian_common_firewall: yes
+
+# Common packages
+debian_common_packages:
+  - atop
+  - bash-completion
+  - apt-transport-https
+  - ca-certificates
+  - software-properties-common
+  - curl
+  - tmux
+  - tree
+  - vim
+  - git
+  - htop
+  - acl
+  - dbus
+
+# Extra and supplementary packages
+debian_common_extra_packages:
+  - libgmp-dev
+  - python3-pip
+  - virtualenv
+  - python3-setuptools
+  - build-essential
+  - dkms
+  - dnsutils
+  - gnupg2
+  - net-tools
+  - nmap
+  - unzip
+
+debian_common_supplementary_packages: []
+
+# Bash history configuration
+debian_common_bash_history: true
+debian_common_bash_history_histsize: "5000"
+debian_common_bash_history_histfilesize: "3000"
+debian_common_bash_history_histtimeformat: "%c%t"

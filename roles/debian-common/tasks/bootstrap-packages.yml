@@ -7,5 +7,5 @@
 
 - name: Install extra packages
   apt:
-    name: "{{ fun_debian_common_extra_packages | union(fun_debian_common_supplementary_packages) }}"
+    name: "{{ debian_common_extra_packages | union(debian_common_supplementary_packages) }}"
     state: latest
