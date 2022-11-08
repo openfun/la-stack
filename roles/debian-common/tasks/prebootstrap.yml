@@ -1,7 +1,7 @@
 ---
 - name: Add privileged admin user
   user:
-    name: "{{ fun_debian_common_admin_user }}"
+    name: "{{ debian_common_admin_user }}"
     comment: "Privileged admin user"
     shell: /bin/bash
     groups: sudo
@@ -25,11 +25,11 @@
   blockinfile:
     path: /etc/profile.d/bash_history.sh
     block: |
-      HISTSIZE={{ fun_debian_common_bash_history_histsize }}
-      HISTFILESIZE={{ fun_debian_common_bash_history_histfilesize }}
-      HISTTIMEFORMAT={{ fun_debian_common_bash_history_histtimeformat }}
+      HISTSIZE={{ debian_common_bash_history_histsize }}
+      HISTFILESIZE={{ debian_common_bash_history_histfilesize }}
+      HISTTIMEFORMAT={{ debian_common_bash_history_histtimeformat }}
     state: present
     create: true
-  when: fun_debian_common_bash_history |bool
+  when: debian_common_bash_history |bool
 
 - import_tasks: set-authorized-keys-admin.yml

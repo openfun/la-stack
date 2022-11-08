@@ -4,12 +4,12 @@
   when: prebootstrap is defined
 
 - import_tasks: bootstrap.yml
-  remote_user: "{{ fun_debian_common_admin_user }}"
+  remote_user: "{{ debian_common_admin_user }}"
   become: yes
   when: bootstrap is defined
 
 - import_tasks: set-authorized-keys.yml
-  remote_user: "{{ fun_debian_common_admin_user }}"
+  remote_user: "{{ debian_common_admin_user }}"
   become: yes
   when: add_remove_keys is defined
   tags:

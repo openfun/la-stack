@@ -8,7 +8,7 @@
 - import_tasks: bootstrap-ssh.yml
 
 - import_tasks: bootstrap-firewall.yml
-  when: fun_debian_common_firewall |bool
+  when: debian_common_firewall |bool
 
 - import_tasks: bootstrap-regular-user.yml
-  when: fun_debian_common_regular_user is defined
+  when: debian_common_regular_user is defined
