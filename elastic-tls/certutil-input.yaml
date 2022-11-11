@@ -1,0 +1,11 @@
+---
+instances:
+  - name: "elk-1"
+    ip:
+      - "X.X.X.X"
+  - name: "elk-2"
+    ip:
+      - "X.X.X.X"
+  - name: "elk-3"
+    ip:
+      - "X.X.X.X"
