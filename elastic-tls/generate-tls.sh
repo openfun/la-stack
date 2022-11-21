@@ -1,5 +1,10 @@
-#!/bin/bash 
-set -e
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+declare -r ELASTIC_VERSION="${ELASTIC_VERSION:-7.17.0}"
+declare -r TYPE="${TYPE:-cluster}"
+declare -r PASS="${PASS:-PA$$W0RD_TO_CHANGE}"
 
 check_docker() {
   if ! command -v docker &> /dev/null
@@ -44,6 +49,33 @@ clean() {
   
 }
 
+generate_ca() {
+  docker run --rm -t \
+    --mount type=bind,source="$(pwd)",target=/tmp \
+    docker.elastic.co/elasticsearch/elasticsearch:"${ELASTIC_VERSION}" \
+    bash -c " elasticsearch-certutil ca --silent --out /tmp/my-ca.p12 --pass \"${PASS}\" "
+}
+
+generate_certs() {
+  if [ "$TYPE" == "single" ]; then
+    docker run --rm -t \
+        --mount type=bind,source="$(pwd)",target=/tmp \
+        docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
+        bash -c "elasticsearch-certutil cert --silent --multiple --ca /tmp/my-ca.p12 --ca-pass \"${PASS}\" --out /tmp/my-keystore.p12 --pass \"${PASS}\" --in /tmp/certutil-input.yaml"
+  elif [ "$TYPE" == "cluster" ]; then
+    docker run --rm -t \
+      --mount type=bind,source="$(pwd)",target=/tmp \
+      docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
+      bash -c "elasticsearch-certutil cert --silent --ca /tmp/my-ca.p12 --ca-pass \"${PASS}\" --out /tmp/my-keystore.p12 --pass \"${PASS}\" --in /tmp/certutil-input.yaml"
+  else
+      echo
+      echo "The type must be single or cluster."
+      echo "--------------------------------"
+      echo
+      usage
+  fi
+}
+
 while getopts ":v:t:p:h" o; do
     case "${o}" in
         v)
@@ -78,16 +110,11 @@ fi
 check_docker
 check_config
 clean
+echo " 1) Generating CA"
+generate_ca
+echo " 2) Generating certificates"
+generate_certs
+echo " 3) Extract certificates"
+unzip my-keystore.p12 -d keystore
+echo "Done!"
 
-if [ $TYPE == "single" ] || [ $TYPE == "cluster" ]; then
-    docker run --rm -t \
-        --mount type=bind,source="$(pwd)",target=/tmp \
-        docker.elastic.co/elasticsearch/elasticsearch:$ELASTIC_VERSION \
-        bash -c "bash /tmp/cert-tools.sh $TYPE $PASS"
-else
-    echo
-    echo "You must set single or cluster type."
-    echo "--------------------------------"
-    echo
-    usage
-fi
