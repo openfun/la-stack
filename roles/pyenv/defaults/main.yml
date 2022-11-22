@@ -1,0 +1,43 @@
+---
+# defaults file for pyenv
+pyenv_env: "user"
+pyenv_owner: "{{ ansible_env.USER }}"
+pyenv_owner_group: "{{ pyenv_owner }}"
+pyenv_path: "{% if pyenv_env == 'user' %}/home/{{ pyenv_owner }}/pyenv{% else %}/usr/local/pyenv{% endif %}"
+pyenv_setting_path: "{% if pyenv_env == 'user' %}~/.bashrc{% else %}/etc/profile.d/pyenv.sh{% endif %}"
+pyenv_update_git_install: true
+pyenv_enable_autocompletion: false
+pyenv_python_versions:
+  - 3.9.15
+pyenv_global:
+  - 3.9.15
+pyenv_virtualenvs:
+  []
+  # - { venv_name: "latest", py_version: "3.9.15" }
+# For a system install, the shims dir will not be writable by users, disable rehashing
+pyenv_init_options: "{% if pyenv_env != 'user' %}--no-rehash{% endif %}"
+
+pyenv_update: false
+
+# additional options for the build process, e.g "--enable-shared"
+pyenv_python_configure_opts: ""
+pyenv_uninstall_python_w_wrong_configure_opts: false
+
+pyenv_debian_packages:
+  - build-essential
+  - curl
+  - git
+  - llvm
+  - libbz2-dev
+  - libffi-dev
+  - liblzma-dev
+  - libncurses5-dev
+  - libncursesw5-dev
+  - libreadline-dev
+  - libsqlite3-dev
+  - libssl-dev
+  - python3-openssl
+  - tk-dev
+  - wget
+  - xz-utils
+  - zlib1g-dev
