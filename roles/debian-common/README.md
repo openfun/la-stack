@@ -1,4 +1,4 @@
-# FUN Debian Common
+# Debian Common
 
 Roles for configuring clean Debian / Ubuntu machine
 

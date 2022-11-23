@@ -1,0 +1,158 @@
+---
+- hosts: es_0
+  roles:
+    - role: debian-common
+      prebootstrap: true
+      become: true
+    - role: debian-common
+      bootstrap: true
+      add_remove_keys: true
+      vars:
+        ports: ["22", "9300", "9200"]
+    - role: elastic
+      vars:
+        # es_version: 7.16.2
+        es_config:
+          node.name: "es_0"
+          cluster.name: "test-cluster"
+          # discovery.seed_hosts: "{{ groups['elk'] | map('extract', hostvars, ['ansible_host']) | join(':9300,') }}:9300"
+          # cluster.initial_master_nodes: "{{ groups['elk'] | map('extract', hostvars, ['ansible_host']) | join(',') }}"
+          discovery.seed_hosts: "51.158.74.167:9300"
+          cluster.initial_master_nodes: "es_0"
+          http.host: 0.0.0.0
+          http.port: 9200
+          transport.host: 0.0.0.0
+          transport.port: 9300
+          node.data: false
+          node.master: true
+          bootstrap.memory_lock: true
+          xpack.security.authc.realms.file.file1.order: 0
+          xpack.security.authc.realms.native.native1.order: 1
+        es_heap_size: 1g
+        es_api_basic_auth_username: "elastic" # This is the default user created by the installation of elasticsearch
+        es_api_basic_auth_password: "changeme" # This is the default password created by the installation of elasticsearch
+        es_enable_http_ssl: true
+        es_enable_transport_ssl: true
+        es_ssl_keystore: "./elastic-tls/keystore/es_0/es_0.p12"
+        es_ssl_truststore: "./elastic-tls/my-ca.p12"
+        es_validate_certs: no
+
+- hosts: es_1
+  roles:
+    - role: debian-common
+      prebootstrap: true
+      become: true
+    - role: debian-common
+      bootstrap: true
+      add_remove_keys: true
+      vars:
+        ports: ["22", "9300", "9200"]
+    - role: elastic
+      vars:
+        # es_version: 7.16.2
+        es_config:
+          node.name: "es_1"
+          cluster.name: "test-cluster"
+          discovery.seed_hosts: "51.158.74.167:9300"
+          cluster.initial_master_nodes: "es_0"
+          http.host: 0.0.0.0
+          http.port: 9200
+          transport.host: 0.0.0.0
+          transport.port: 9300
+          node.data: true
+          node.master: false
+          bootstrap.memory_lock: true
+          xpack.security.authc.realms.file.file1.order: 0
+          xpack.security.authc.realms.native.native1.order: 1
+        es_heap_size: 1g
+        es_api_basic_auth_username: "elastic" # This is the default user created by the installation of elasticsearch
+        es_api_basic_auth_password: "changeme" # This is the default password created by the installation of elasticsearch
+        es_enable_http_ssl: true
+        es_enable_transport_ssl: true
+        es_ssl_keystore: "./elastic-tls/keystore/es_1/es_1.p12"
+        es_ssl_truststore: "./elastic-tls/my-ca.p12"
+        es_validate_certs: no
+
+- hosts: es_2
+  roles:
+    - role: debian-common
+      prebootstrap: true
+      become: true
+    - role: debian-common
+      bootstrap: true
+      add_remove_keys: true
+      vars:
+        ports: ["22", "9300", "9200"]
+    - role: elastic
+      vars:
+        # es_version: 7.16.2
+        es_config:
+          node.name: "es_2"
+          cluster.name: "test-cluster"
+          discovery.seed_hosts: "51.158.74.167:9300"
+          cluster.initial_master_nodes: "es_0"
+          http.host: 0.0.0.0
+          http.port: 9200
+          transport.host: 0.0.0.0
+          transport.port: 9300
+          node.data: true
+          node.master: false
+          bootstrap.memory_lock: true
+          xpack.security.authc.realms.file.file1.order: 0
+          xpack.security.authc.realms.native.native1.order: 1
+        es_heap_size: 1g
+        es_api_basic_auth_username: "elastic" # This is the default user created by the installation of elasticsearch
+        es_api_basic_auth_password: "changeme" # This is the default password created by the installation of elasticsearch
+        es_enable_http_ssl: true
+        es_enable_transport_ssl: true
+        es_ssl_keystore: "./elastic-tls/keystore/es_2/es_2.p12"
+        es_ssl_truststore: "./elastic-tls/my-ca.p12"
+        es_validate_certs: no
+
+- hosts: grafana
+  roles:
+    - role: debian-common
+      prebootstrap: true
+      become: true
+    - role: debian-common
+      bootstrap: true
+      add_remove_keys: true
+      vars:
+        ports: ["22", "3000"]
+    - role: grafana
+      vars:
+        grafana_security:
+          admin_user: admin
+          admin_password: "funadmin"
+        grafana_datasources:
+          - name: Elastic
+            type: elasticsearch
+            access: proxy
+            database: '[metrics-]YYYY.MM.DD'
+            url: 'http://{{ prometheus_web_listen_address }}'
+            basicAuth: true
+            basicAuthUser: elastic
+            basicAuthPassword: changeme
+            jsonData:
+              interval: Daily
+              timeField: '@timestamp'
+
+- hosts: ralph
+  roles:
+    - role: debian-common
+      prebootstrap: true
+      become: true
+    - role: debian-common
+      bootstrap: true
+      add_remove_keys: true
+      vars:
+        ports: ["22"]
+    - role: pyenv
+      vars:
+        pyenv_owner: admin
+        pyenv_virtualenvs:
+          - venv_name: ralph_venv
+            py_version: 3.9.15
+    - role: ralph
+      become_user: admin
+      become: true
