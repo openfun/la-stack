@@ -1,0 +1,5 @@
+---
+- name: Install Ralph
+  ansible.builtin.pip:
+    name: ralph-malph[{{ ralph_packages | join(',') }}]
+    executable: /home/{{ ralph_user }}/pyenv/shims/pip
