@@ -1,0 +1,11 @@
+---
+ralph_user: "admin"
+
+ralph_packages:
+  - backend-es
+  - backend-ldp
+  - backend-mongo
+  - backend-swift
+  - backend-ws
+  - cli
+  - lrs
