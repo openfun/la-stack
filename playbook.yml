@@ -1,5 +1,8 @@
 ---
 - hosts: es_0
+  vars:
+    debian_common_admin_user_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
   roles:
     - role: debian-common
       prebootstrap: true
@@ -17,7 +20,7 @@
           cluster.name: "test-cluster"
           # discovery.seed_hosts: "{{ groups['elk'] | map('extract', hostvars, ['ansible_host']) | join(':9300,') }}:9300"
           # cluster.initial_master_nodes: "{{ groups['elk'] | map('extract', hostvars, ['ansible_host']) | join(',') }}"
-          discovery.seed_hosts: "51.158.74.167:9300"
+          discovery.seed_hosts: "163.172.184.176:9300"
           cluster.initial_master_nodes: "es_0"
           http.host: 0.0.0.0
           http.port: 9200
@@ -35,9 +38,14 @@
         es_enable_transport_ssl: true
         es_ssl_keystore: "./elastic-tls/keystore/es_0/es_0.p12"
         es_ssl_truststore: "./elastic-tls/my-ca.p12"
+        es_ssl_truststore_password: "PA$$W0RD_TO_CHANGE"
+        es_ssl_keystore_password: "PA$$W0RD_TO_CHANGE"
         es_validate_certs: no
 
 - hosts: es_1
+  vars:
+    debian_common_admin_user_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
   roles:
     - role: debian-common
       prebootstrap: true
@@ -53,7 +61,7 @@
         es_config:
           node.name: "es_1"
           cluster.name: "test-cluster"
-          discovery.seed_hosts: "51.158.74.167:9300"
+          discovery.seed_hosts: "163.172.184.176:9300"
           cluster.initial_master_nodes: "es_0"
           http.host: 0.0.0.0
           http.port: 9200
@@ -71,9 +79,14 @@
         es_enable_transport_ssl: true
         es_ssl_keystore: "./elastic-tls/keystore/es_1/es_1.p12"
         es_ssl_truststore: "./elastic-tls/my-ca.p12"
+        es_ssl_truststore_password: "PA$$W0RD_TO_CHANGE"
+        es_ssl_keystore_password: "PA$$W0RD_TO_CHANGE"
         es_validate_certs: no
 
 - hosts: es_2
+  vars:
+    debian_common_admin_user_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
   roles:
     - role: debian-common
       prebootstrap: true
@@ -89,7 +102,7 @@
         es_config:
           node.name: "es_2"
           cluster.name: "test-cluster"
-          discovery.seed_hosts: "51.158.74.167:9300"
+          discovery.seed_hosts: "163.172.184.176:9300"
           cluster.initial_master_nodes: "es_0"
           http.host: 0.0.0.0
           http.port: 9200
@@ -107,9 +120,14 @@
         es_enable_transport_ssl: true
         es_ssl_keystore: "./elastic-tls/keystore/es_2/es_2.p12"
         es_ssl_truststore: "./elastic-tls/my-ca.p12"
+        es_ssl_truststore_password: "PA$$W0RD_TO_CHANGE"
+        es_ssl_keystore_password: "PA$$W0RD_TO_CHANGE"
         es_validate_certs: no
 
 - hosts: grafana
+  vars:
+    debian_common_admin_user_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
   roles:
     - role: debian-common
       prebootstrap: true
@@ -129,7 +147,7 @@
             type: elasticsearch
             access: proxy
             database: '[metrics-]YYYY.MM.DD'
-            url: 'http://{{ prometheus_web_listen_address }}'
+            url: 'https://163.172.184.176:9200'
             basicAuth: true
             basicAuthUser: elastic
             basicAuthPassword: changeme
@@ -138,6 +156,9 @@
               timeField: '@timestamp'
 
 - hosts: ralph
+  vars:
+    debian_common_admin_user_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
   roles:
     - role: debian-common
       prebootstrap: true
