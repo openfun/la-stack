@@ -1,11 +1,11 @@
 ---
 instances:
-  - name: "elk-1"
+  - name: "es_0"
     ip:
-      - "X.X.X.X"
-  - name: "elk-2"
+      - "51.158.74.167"
+  - name: "es_1"
     ip:
-      - "X.X.X.X"
-  - name: "elk-3"
+      - "212.47.241.56"
+  - name: "es_3"
     ip:
-      - "X.X.X.X"
+      - "51.15.142.13"

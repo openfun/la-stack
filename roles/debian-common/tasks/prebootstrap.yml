@@ -1,10 +1,15 @@
 ---
+- name: Ensure group "{{ debian_common_admin_user }}" exists
+  ansible.builtin.group:
+    name: "{{ debian_common_admin_user }}"
+    state: present
+
 - name: Add privileged admin user
   user:
     name: "{{ debian_common_admin_user }}"
     comment: "Privileged admin user"
     shell: /bin/bash
-    groups: sudo
+    groups: sudo,{{ debian_common_admin_user }}
     append: yes
 
 - name: Install sudo package
