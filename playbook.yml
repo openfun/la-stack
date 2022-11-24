@@ -20,7 +20,7 @@
           cluster.name: "test-cluster"
           # discovery.seed_hosts: "{{ groups['elk'] | map('extract', hostvars, ['ansible_host']) | join(':9300,') }}:9300"
           # cluster.initial_master_nodes: "{{ groups['elk'] | map('extract', hostvars, ['ansible_host']) | join(',') }}"
-          discovery.seed_hosts: "163.172.184.176:9300"
+          discovery.seed_hosts: "163.172.159.6:9300"
           cluster.initial_master_nodes: "es_0"
           http.host: 0.0.0.0
           http.port: 9200
@@ -38,8 +38,8 @@
         es_enable_transport_ssl: true
         es_ssl_keystore: "./elastic-tls/keystore/es_0/es_0.p12"
         es_ssl_truststore: "./elastic-tls/my-ca.p12"
-        es_ssl_truststore_password: "PA$$W0RD_TO_CHANGE"
-        es_ssl_keystore_password: "PA$$W0RD_TO_CHANGE"
+        # es_ssl_truststore_password: "secret"
+        # es_ssl_keystore_password: "secret"
         es_validate_certs: no
 
 - hosts: es_1
@@ -61,7 +61,7 @@
         es_config:
           node.name: "es_1"
           cluster.name: "test-cluster"
-          discovery.seed_hosts: "163.172.184.176:9300"
+          discovery.seed_hosts: "163.172.159.6:9300"
           cluster.initial_master_nodes: "es_0"
           http.host: 0.0.0.0
           http.port: 9200
@@ -79,8 +79,8 @@
         es_enable_transport_ssl: true
         es_ssl_keystore: "./elastic-tls/keystore/es_1/es_1.p12"
         es_ssl_truststore: "./elastic-tls/my-ca.p12"
-        es_ssl_truststore_password: "PA$$W0RD_TO_CHANGE"
-        es_ssl_keystore_password: "PA$$W0RD_TO_CHANGE"
+        # es_ssl_truststore_password: "secret"
+        # es_ssl_keystore_password: "secret"
         es_validate_certs: no
 
 - hosts: es_2
@@ -102,7 +102,7 @@
         es_config:
           node.name: "es_2"
           cluster.name: "test-cluster"
-          discovery.seed_hosts: "163.172.184.176:9300"
+          discovery.seed_hosts: "163.172.159.6:9300"
           cluster.initial_master_nodes: "es_0"
           http.host: 0.0.0.0
           http.port: 9200
@@ -120,8 +120,8 @@
         es_enable_transport_ssl: true
         es_ssl_keystore: "./elastic-tls/keystore/es_2/es_2.p12"
         es_ssl_truststore: "./elastic-tls/my-ca.p12"
-        es_ssl_truststore_password: "PA$$W0RD_TO_CHANGE"
-        es_ssl_keystore_password: "PA$$W0RD_TO_CHANGE"
+        # es_ssl_truststore_password: "secret"
+        # es_ssl_keystore_password: "secret"
         es_validate_certs: no
 
 - hosts: grafana
@@ -147,13 +147,14 @@
             type: elasticsearch
             access: proxy
             database: '[metrics-]YYYY.MM.DD'
-            url: 'https://163.172.184.176:9200'
+            url: 'https://163.172.159.6:9200'
             basicAuth: true
             basicAuthUser: elastic
             basicAuthPassword: changeme
             jsonData:
               interval: Daily
               timeField: '@timestamp'
+              tlsSkipVerify: true
 
 - hosts: ralph
   vars:

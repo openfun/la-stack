@@ -2,9 +2,9 @@
 
 set -eo pipefail
 
-declare -r ELASTIC_VERSION="${ELASTIC_VERSION:-7.17.0}"
-declare -r TYPE="${TYPE:-cluster}"
-declare -r PASS="${PASS:-PA$$W0RD_TO_CHANGE}"
+declare ELASTIC_VERSION="${ELASTIC_VERSION:-7.17.0}"
+declare TYPE="${TYPE:-cluster}"
+declare PASS="${PASS:-PA$$W0RD_TO_CHANGE}"
 
 check_docker() {
   if ! command -v docker &> /dev/null
@@ -25,7 +25,7 @@ check_config() {
 
 help() {
    # Display Help
-   echo "Script for generating Elastic TLS fils."
+   echo "Script for generating Elastic TLS files."
    echo
    echo "Usage: $0 [-v <string>] [-t <single|cluster>] [-p <string>]"
    echo
@@ -53,7 +53,7 @@ generate_ca() {
   docker run --rm -t \
     --mount type=bind,source="$(pwd)",target=/tmp \
     docker.elastic.co/elasticsearch/elasticsearch:"${ELASTIC_VERSION}" \
-    bash -c " elasticsearch-certutil ca --silent --out /tmp/my-ca.p12 --pass \"${PASS}\" "
+    bash -c " elasticsearch-certutil ca --silent --out /tmp/my-ca.p12 --pass \"\" "
 }
 
 generate_certs() {
@@ -61,12 +61,12 @@ generate_certs() {
     docker run --rm -t \
         --mount type=bind,source="$(pwd)",target=/tmp \
         docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
-        bash -c "elasticsearch-certutil cert --silent --multiple --ca /tmp/my-ca.p12 --ca-pass \"${PASS}\" --out /tmp/my-keystore.p12 --pass \"${PASS}\" --in /tmp/certutil-input.yaml"
+        bash -c "elasticsearch-certutil cert --silent --multiple --ca /tmp/my-ca.p12 --ca-pass \"\" --out /tmp/my-keystore.p12 --pass \"\" --in /tmp/certutil-input.yaml"
   elif [ "$TYPE" == "cluster" ]; then
     docker run --rm -t \
       --mount type=bind,source="$(pwd)",target=/tmp \
       docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
-      bash -c "elasticsearch-certutil cert --silent --ca /tmp/my-ca.p12 --ca-pass \"${PASS}\" --out /tmp/my-keystore.p12 --pass \"${PASS}\" --in /tmp/certutil-input.yaml"
+      bash -c "elasticsearch-certutil cert --silent --ca /tmp/my-ca.p12 --ca-pass \"\" --out /tmp/my-keystore.p12 --pass \"\" --in /tmp/certutil-input.yaml"
   else
       echo
       echo "The type must be single or cluster."
