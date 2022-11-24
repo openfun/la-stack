@@ -74,6 +74,6 @@ es_ssl_certificate: ""
 es_ssl_certificate_authority: ""
 es_ssl_certificate_path: "{{ es_conf_dir }}/certs"
 es_ssl_verification_mode: "certificate"
-es_validate_certs: "yes"
+es_validate_certs: "no"
 es_delete_unmanaged_file: true
 es_delete_unmanaged_native: true
