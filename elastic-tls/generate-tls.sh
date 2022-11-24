@@ -4,7 +4,6 @@ set -eo pipefail
 
 declare ELASTIC_VERSION="${ELASTIC_VERSION:-7.17.0}"
 declare TYPE="${TYPE:-cluster}"
-declare PASS="${PASS:-PA$$W0RD_TO_CHANGE}"
 
 check_docker() {
   if ! command -v docker &> /dev/null
@@ -33,7 +32,6 @@ help() {
    echo 
    echo "-v     Set Elaticsearch version, exp 7.17.0."
    echo "-t     single or cluster type."
-   echo "-p     Password for CA and certificates."
    echo "-h     Print Help."
    echo
 }
@@ -53,7 +51,7 @@ generate_ca() {
   docker run --rm -t \
     --mount type=bind,source="$(pwd)",target=/tmp \
     docker.elastic.co/elasticsearch/elasticsearch:"${ELASTIC_VERSION}" \
-    bash -c " elasticsearch-certutil ca --silent --out /tmp/my-ca.p12 --pass \"\" "
+    bash -c " elasticsearch-certutil ca --silent --out /tmp/my-ca.p12 --pass \"\""
 }
 
 generate_certs() {
@@ -76,16 +74,13 @@ generate_certs() {
   fi
 }
 
-while getopts ":v:t:p:h" o; do
+while getopts ":v:t:h" o; do
     case "${o}" in
         v)
             ELASTIC_VERSION=${OPTARG}
             ;;
         t)
             TYPE=${OPTARG}
-            ;;
-        p)
-            PASS=${OPTARG}
             ;;
         h)
             help
@@ -99,7 +94,7 @@ while getopts ":v:t:p:h" o; do
 done
 shift $((OPTIND-1))
 
-if [ -z "${ELASTIC_VERSION}" ] || [ -z "${TYPE}" ] || [ -z "${PASS}" ]; then
+if [ -z "${ELASTIC_VERSION}" ] || [ -z "${TYPE}" ]; then
     echo
     echo "Missing required parameters"
     echo "--------------------------------"

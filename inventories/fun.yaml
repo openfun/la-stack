@@ -1,0 +1,60 @@
+all:
+  vars:
+    ansible_user: root
+    debian_common_admin_user_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAcLMHQbGDsGDHQ90eV7Tt1/lm98b3hgjn1cFB9xKlNU julien.maupetit@fun-mooc.fr
+
+elastic:
+  hosts:
+    es_0:
+      ansible_host: 212.47.241.56
+    es_1:
+      ansible_host: 51.15.142.13
+    es_2:
+      ansible_host: 163.172.182.78
+  vars:
+    es_config:
+      node.name: "{{inventory_hostname}}"
+      cluster.name: "test-cluster"
+      discovery.seed_hosts: "{{ hostvars[groups['elastic'][0]]['ansible_host'] }}:9300"
+      cluster.initial_master_nodes: "es_0"
+      http.host: 0.0.0.0
+      http.port: 9200
+      transport.host: 0.0.0.0
+      transport.port: 9300
+      bootstrap.memory_lock: true
+      xpack.security.authc.realms.file.file1.order: 0
+      xpack.security.authc.realms.native.native1.order: 1
+    es_heap_size: 1g
+    es_api_basic_auth_username: "elastic"
+    es_api_basic_auth_password: "changeme"
+    es_enable_http_ssl: true
+    es_enable_transport_ssl: true
+    es_ssl_keystore: "./elastic-tls/keystore/{{inventory_hostname}}/{{inventory_hostname}}.p12"
+    es_ssl_truststore: "./elastic-tls/my-ca.p12"
+
+grafana:
+  hosts:
+    grafana_0:
+      ansible_host: 51.15.229.96
+  vars:
+    grafana_security:
+      admin_user: admin
+      admin_password: "changeme"
+    grafana_datasources:
+      - name: Elastic
+        type: elasticsearch
+        access: proxy
+        database: "[metrics-]YYYY.MM.DD"
+        url: "https://{{ hostvars[groups['elastic'][0]]['ansible_host'] }}:9200"
+        basicAuth: true
+        basicAuthUser: elastic
+        basicAuthPassword: changeme
+        jsonData:
+          tlsSkipVerify: true
+
+ralph:
+  hosts:
+    ralph_0:
+      ansible_host: 163.172.159.6
+  vars:

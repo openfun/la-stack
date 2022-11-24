@@ -3,7 +3,7 @@ Tooling: elastic-tls
 
 Script shell used to help you generate SSL/TLS config for Elasticsearch
 
-`$ ./generate-tls.sh -v 7.17.0 -t cluster -p secret`
+`$ ./generate-tls.sh -v 7.17.0 -t cluster`
 
 ```
 Usage: ./generate-tls.sh [-v <string>] [-t <single|cluster>] [-p <string>]
@@ -12,7 +12,6 @@ options:
 
 -v     Set Elaticsearch version, exp 7.17.0.
 -t     single or cluster type.
--p     Password for CA and certificates.
 -h     Print Help.
 ```
 
