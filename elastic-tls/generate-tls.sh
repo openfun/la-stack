@@ -55,19 +55,16 @@ generate_ca() {
 }
 
 generate_certs() {
-  alias docker-run-es="docker run --rm -t --mount type=bind,source=${PWD},target=/tmp \
-                      docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
-
-  certutil_base_cmd="""elasticsearch-certutil cert \
-                      --silent \
-                      --ca /tmp/my-ca.p12 --ca-pass "${ES_CA_CERT_PASSWORD}" \
-                      --out /tmp/my-keystore.p12 --pass "${ES_CERT_PASSWORD}" 
-                      --in /tmp/certutil-input.yaml"""
-
   if [ "$TYPE" == "single" ]; then
-    docker-run-es bash -c "${certutil_base_cmd}"
+    docker run --rm -t \
+        --mount type=bind,source="$(pwd)",target=/tmp \
+        docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
+        bash -c "elasticsearch-certutil cert --silent --multiple --ca /tmp/my-ca.p12 --ca-pass \"\" --out /tmp/my-keystore.p12 --pass \"\" --in /tmp/certutil-input.yaml"
   elif [ "$TYPE" == "cluster" ]; then
-    docker-run-es bash -c "${certutil_base_cmd} --multiple"
+    docker run --rm -t \
+      --mount type=bind,source="$(pwd)",target=/tmp \
+      docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
+      bash -c "elasticsearch-certutil cert --silent --ca /tmp/my-ca.p12 --ca-pass \"\" --out /tmp/my-keystore.p12 --pass \"\" --in /tmp/certutil-input.yaml"
   else
       echo
       echo "The type must be single or cluster."
