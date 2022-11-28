@@ -8,7 +8,7 @@
       bootstrap: true
       add_remove_keys: true
       vars:
-        ports: ["22", "9300", "9200"]
+        firewall_allowed_ports: ["22", "9300", "9200"]
     - role: elastic
       vars:
         es_config:
@@ -24,7 +24,7 @@
       bootstrap: true
       add_remove_keys: true
       vars:
-        ports: ["22", "9300", "9200"]
+        firewall_allowed_ports: ["22", "9300", "9200"]
     - role: elastic
       vars:
         es_config:
@@ -40,7 +40,7 @@
       bootstrap: true
       add_remove_keys: true
       vars:
-        ports: ["22", "9300", "9200"]
+        firewall_allowed_ports: ["22", "9300", "9200"]
     - role: elastic
       vars:
         es_config:
@@ -56,7 +56,7 @@
       bootstrap: true
       add_remove_keys: true
       vars:
-        ports: ["22", "3000"]
+        firewall_allowed_ports: ["22", "3000"]
     - role: grafana
 
 - hosts: ralph
@@ -68,7 +68,7 @@
       bootstrap: true
       add_remove_keys: true
       vars:
-        ports: ["22"]
+        firewall_allowed_ports: ["22"]
     - role: pyenv
       vars:
         pyenv_owner: admin

@@ -11,46 +11,20 @@ debian_common_firewall: yes
 
 # Common packages
 debian_common_packages:
-  - atop
   - bash-completion
   - apt-transport-https
   - ca-certificates
   - software-properties-common
   - curl
-  - tmux
-  - tree
-  - vim
   - git
-  - htop
-  - acl
-  - dbus
 
 # Extra and supplementary packages
 debian_common_extra_packages:
   - libgmp-dev
-  - virtualenv
   - build-essential
   - dkms
-  - dnsutils
   - gnupg2
-  - net-tools
-  - nmap
   - unzip
-  - python3-pip
-  - python3-dev
-  - python3-pip
-  - python3-venv
-  - python3-wheel
-  - python3-setuptools
-  - zlib1g-dev
-  - libncurses5-dev
-  - libgdbm-dev
-  - libnss3-dev
-  - libssl-dev
-  - libsqlite3-dev
-  - libreadline-dev
-  - libffi-dev
-  - libbz2-dev
 
 debian_common_supplementary_packages: []
 
