@@ -9,7 +9,7 @@ check_docker() {
   if ! command -v docker &> /dev/null
   then
     echo "Docker could not be found"
-    echo "Docker is required to run this script, please install"
+    echo "Docker is required to run this script, please install it first."
     exit
   fi
 }
@@ -17,14 +17,14 @@ check_docker() {
 check_config() {
   if [ ! -f ./certutil-input.yaml ]; then
     echo "certutil-input.yaml not found"
-    echo "You must create certutil-input.yaml before running this script."
+    echo "You must create the certutil-input.yaml file before running this script."
     exit
   fi
 }
 
 help() {
    # Display Help
-   echo "Script for generating Elastic TLS files."
+   echo "Script for generating Elasticsearch TLS files."
    echo
    echo "Usage: $0 [-v <string>] [-t <single|cluster>] [-p <string>]"
    echo
@@ -55,16 +55,19 @@ generate_ca() {
 }
 
 generate_certs() {
+  alias docker-run-es="docker run --rm -t --mount type=bind,source=${PWD},target=/tmp \
+                      docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
+
+  certutil_base_cmd="""elasticsearch-certutil cert \
+                      --silent \
+                      --ca /tmp/my-ca.p12 --ca-pass "${ES_CA_CERT_PASSWORD}" \
+                      --out /tmp/my-keystore.p12 --pass "${ES_CERT_PASSWORD}" 
+                      --in /tmp/certutil-input.yaml"""
+
   if [ "$TYPE" == "single" ]; then
-    docker run --rm -t \
-        --mount type=bind,source="$(pwd)",target=/tmp \
-        docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
-        bash -c "elasticsearch-certutil cert --silent --multiple --ca /tmp/my-ca.p12 --ca-pass \"\" --out /tmp/my-keystore.p12 --pass \"\" --in /tmp/certutil-input.yaml"
+    docker-run-es bash -c "${certutil_base_cmd}"
   elif [ "$TYPE" == "cluster" ]; then
-    docker run --rm -t \
-      --mount type=bind,source="$(pwd)",target=/tmp \
-      docker.elastic.co/elasticsearch/elasticsearch:"$ELASTIC_VERSION" \
-      bash -c "elasticsearch-certutil cert --silent --ca /tmp/my-ca.p12 --ca-pass \"\" --out /tmp/my-keystore.p12 --pass \"\" --in /tmp/certutil-input.yaml"
+    docker-run-es bash -c "${certutil_base_cmd} --multiple"
   else
       echo
       echo "The type must be single or cluster."

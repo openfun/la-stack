@@ -10,3 +10,4 @@
 **/*.crt
 **/*.csr
 **/keystore
+**/__pycache__
