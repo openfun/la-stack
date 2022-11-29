@@ -9,6 +9,13 @@
 #   la-stack-es-master-01:
 #     ansible_host: www.xxx.yyy.zzz
 #
+# You must also add the reserved variable in the roles config, e.g.:
+#
+# elasticsearch:
+#   vars:
+#     es_config:
+#       discovery.seed_hosts: "{{ hostvars[groups['es-master-nodes'][0]]['ansible_host'] }}:9300"
+
 all:
   # Common vars for all hosts
   vars:
@@ -24,7 +31,7 @@ all:
           hosts:
             la-stack-es-master-01:
           vars:
-            es_config:
+            es_config_host:
               node.master: true
               node.data: false
         es-data-nodes:
@@ -32,15 +39,16 @@ all:
             la-stack-es-data-01:
             la-stack-es-data-02:
           vars:
-            es_config:
+            es_config_host:
               node.master: false
               node.data: true
       vars:
+        firewall_allowed_ports: ["22", "9300", "9200"]
         es_config:
           node.name: "{{ inventory_hostname }}"
           cluster.name: "test-cluster"
           discovery.seed_hosts: "{{ hostvars[groups['es-master-nodes'][0]] }}:9300"
-          cluster.initial_master_nodes: "{{ hostvars[groups['es-master-nodes'][0]] }}"
+          cluster.initial_master_nodes: "{{ hostvars[groups['es-master-nodes'][0]]['inventory_hostname'] }}"
           http.host: 0.0.0.0
           http.port: 9200
           transport.host: 0.0.0.0

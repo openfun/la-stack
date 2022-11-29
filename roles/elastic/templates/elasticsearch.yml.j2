@@ -1,4 +1,8 @@
 
+{% if es_config_host %}
+{{ es_config_host | to_nice_yaml(indent=2) }}
+{% endif %}
+
 {% if es_config %}
 {{ es_config | to_nice_yaml(indent=2) }}
 {% endif %}

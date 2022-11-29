@@ -1,5 +1,6 @@
 ---
-- hosts: es_0
+- name: Install Debian common on all the servers
+  hosts: all
   roles:
     - role: debian-common
       prebootstrap: true
@@ -7,74 +8,24 @@
     - role: debian-common
       bootstrap: true
       add_remove_keys: true
-      vars:
-        firewall_allowed_ports: ["22", "9300", "9200"]
-    - role: elastic
-      vars:
-        es_config:
-          node.master: true
-          node.data: false
 
-- hosts: es_1
+- name: Provision Elasticsearch Master nodes
+  hosts: es-master-nodes
   roles:
-    - role: debian-common
-      prebootstrap: true
-      become: true
-    - role: debian-common
-      bootstrap: true
-      add_remove_keys: true
-      vars:
-        firewall_allowed_ports: ["22", "9300", "9200"]
     - role: elastic
-      vars:
-        es_config:
-          node.master: false
-          node.data: true
 
-- hosts: es_2
+- name: Provision Elasticsearch Data nodes
+  hosts: es-data-nodes
   roles:
-    - role: debian-common
-      prebootstrap: true
-      become: true
-    - role: debian-common
-      bootstrap: true
-      add_remove_keys: true
-      vars:
-        firewall_allowed_ports: ["22", "9300", "9200"]
     - role: elastic
-      vars:
-        es_config:
-          node.master: false
-          node.data: true
 
-- hosts: grafana
+- name: Provision Grafana
+  hosts: grafana
   roles:
-    - role: debian-common
-      prebootstrap: true
-      become: true
-    - role: debian-common
-      bootstrap: true
-      add_remove_keys: true
-      vars:
-        firewall_allowed_ports: ["22", "3000"]
     - role: grafana
 
-- hosts: ralph
+- name: Provision Ralph LRS
+  hosts: ralph
   roles:
-    - role: debian-common
-      prebootstrap: true
-      become: true
-    - role: debian-common
-      bootstrap: true
-      add_remove_keys: true
-      vars:
-        firewall_allowed_ports: ["22"]
     - role: pyenv
-      vars:
-        pyenv_owner: admin
-        pyenv_virtualenvs:
-          - venv_name: ralph_venv
-            py_version: 3.9.15
     - role: ralph
-      become_user: admin
-      become: true
