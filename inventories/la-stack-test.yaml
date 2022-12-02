@@ -113,8 +113,21 @@ all:
         la-stack-ralph-00:
           ansible_host: 51.15.134.12
       vars:
-        firewall_allowed_ports: ["22"]
+        firewall_allowed_ports: ["22", "8000"]
         pyenv_owner: admin
         pyenv_virtualenvs:
           - venv_name: ralph_venv
             py_version: 3.9.15
+        ralph_user: ralph
+        ralph_packages:
+          - backend-es
+          - cli
+          - lrs
+        ralph_lrs_auth:
+          - username: "johndoe"
+            hash: "$2b$12$iKUYWtRYSxAUf19DUvvh9O1NOzKMyjV2GrMBBqktdRUAJOYimWrRi"
+            scopes:
+              - "johndoe_scope"
+        ralph_lrs_port: 80
+        ralph_auth_file: "/var/run/ralph/auth.json"
+        ralph_app_dir: "/home/ralph/.ralph"
