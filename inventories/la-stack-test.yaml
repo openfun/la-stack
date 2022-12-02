@@ -75,13 +75,37 @@ all:
           - name: Elastic
             type: elasticsearch
             access: proxy
-            database: "[metrics-]YYYY.MM.DD"
+            database: "statements*"
             url: "https://{{ hostvars[groups['es-master-nodes'][0]]['ansible_host'] }}:9200"
             basicAuth: true
             basicAuthUser: elastic
-            basicAuthPassword: changeme
             jsonData:
-              tlsSkipVerify: true
+              esVersion: "7.17.0"
+              timeField: "timestamp"
+              tlsAuthWithCACert: true
+            secureJsonData:
+              tlsCACert: |
+                -----BEGIN CERTIFICATE-----
+                MIIDSTCCAjGgAwIBAgIUQpvZkPRAS0W0cbqhViaFN0IUUnswDQYJKoZIhvcNAQEL
+                BQAwNDEyMDAGA1UEAxMpRWxhc3RpYyBDZXJ0aWZpY2F0ZSBUb29sIEF1dG9nZW5l
+                cmF0ZWQgQ0EwHhcNMjIxMjAyMTUyNjAwWhcNMjUxMjAxMTUyNjAwWjA0MTIwMAYD
+                VQQDEylFbGFzdGljIENlcnRpZmljYXRlIFRvb2wgQXV0b2dlbmVyYXRlZCBDQTCC
+                ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALMG1HEmxxOWisYwl/NObKvW
+                Glx/pMkPz3QNrgp0lZQniSTxIU+Ivw+uvq0awCzhtn+7t4N5Begs4VY4bFX3fPvP
+                xfpuEqnKC56YsGCJx7ml7UkjbgvkFv+MHEzHIS39QBuGaOshNHt53C1KMG/Ou+Gn
+                odIOW7NweKxHjCDcNPw0ijYAxjxfh2eQdaKgU+4hjy4vkRqTUPwRt5ZDFUY/gFpk
+                Lv+n6j2kAw3/JKGa4kaTSocYR0VUQKywsNXKujRi0CxMpNlS+zDKzvF12keLrs0h
+                UEoZXTQqJ3oEp6KnJCAT7nPgWHRxdPE9Z6CG1vpjb+vR2UUbFZZycsPxroT+ZaUC
+                AwEAAaNTMFEwHQYDVR0OBBYEFEAXyyFbPeqU3S4C2KSht6JVvxKIMB8GA1UdIwQY
+                MBaAFEAXyyFbPeqU3S4C2KSht6JVvxKIMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZI
+                hvcNAQELBQADggEBAAsJuL7/T0jFuJTvBL2FxDwTfRzo0FhuGbmqOebyP1tFwlFD
+                kHgN+YQooZQki6qacIRf1kOBqYolY9UNOKc7GqxPXfyeNquJ4L3laNxKmbF+Co2g
+                QrI+3B0umXxBXOV7SBi5ULNDJFe6k0dmJe54hMvKcbTEEwZJkyc1xdtAp6Y3pTJ0
+                LasNm/Gy/9arFNVZACXq6lZl2UJO5A/bQ39t/bGxwGU6U5g4kDqDr9rwMLCPFow6
+                tiBTZNm7b+xGMQUtA/fSi+xq+QbU1cplp6idFTk2G8YZ/cDZrdLt7qcovG42KoyH
+                97vOenhNrPOEqup4IFWtk7XC/sWe5h0hqaaOeUE=
+                -----END CERTIFICATE-----
+              basicAuthPassword: changeme
 
     # Ralph LRS servers
     ralph:
