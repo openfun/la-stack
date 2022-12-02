@@ -1,0 +1,38 @@
+---
+- name: Install required packages
+  apt:
+    name: "{{ debian_common_packages }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Set hostname to host-specific variable
+  hostname:
+    name: "{{ hostname }}"
+  when: hostname is defined
+  tags:
+    - set-hostname
+
+- name: Add hostname entry to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1  localhost  {{ hostname }}"
+    insertbefore: BOF
+  when: hostname is defined
+  tags:
+    - set-hostname
+
+- name: Set the time zone
+  timezone:
+    name: "{{ debian_common_ntp_timezone }}"
+
+- name: Enable NTP
+  command: timedatectl set-ntp true
+
+- name: Store journald data persistently
+  lineinfile:
+    dest: /etc/systemd/journald.conf
+    regexp: "^#?Storage="
+    line: "Storage=persistent"
+    state: present
+  when: ansible_distribution_release != "trusty"

@@ -1,0 +1,11 @@
+---
+instances:
+  - name: "la-stack-es-master-01"
+    ip:
+      - "212.47.247.104"
+  - name: "la-stack-es-data-01"
+    ip:
+      - "51.158.69.130"
+  - name: "la-stack-es-data-02"
+    ip:
+      - "51.15.235.156"

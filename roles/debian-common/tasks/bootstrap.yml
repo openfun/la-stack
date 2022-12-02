@@ -1,0 +1,14 @@
+---
+- import_tasks: set-authorized-keys-admin.yml
+
+- import_tasks: bootstrap-packages.yml
+
+- import_tasks: bootstrap-services-and-os-settings.yml
+
+- import_tasks: bootstrap-ssh.yml
+
+- import_tasks: bootstrap-firewall.yml
+  when: debian_common_firewall |bool
+
+- import_tasks: bootstrap-regular-user.yml
+  when: debian_common_regular_user is defined

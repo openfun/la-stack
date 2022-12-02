@@ -1,0 +1,5 @@
+---
+
+- name: Create the application directory
+
+- name: Create the LRS auth file
