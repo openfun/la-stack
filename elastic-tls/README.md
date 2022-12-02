@@ -6,11 +6,11 @@ Script shell used to help you generate SSL/TLS config for Elasticsearch
 `$ ./generate-tls.sh -v 7.17.0 -t cluster`
 
 ```
-Usage: ./generate-tls.sh [-v <string>] [-t <single|cluster>] [-p <string>]
+Usage: ./generate-tls.sh [-V <string>] [-t <single|cluster>]
 
 options:
 
--v     Set Elaticsearch version, exp 7.17.0.
+-V     Set Elaticsearch version, exp 7.17.0.
 -t     single or cluster type.
 -h     Print Help.
 ```
