@@ -11,3 +11,6 @@
 **/*.csr
 **/keystore
 **/__pycache__
+
+# Python
+venv/
