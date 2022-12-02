@@ -1,7 +1,9 @@
 ---
 - name: Install Ralph
-  ansible.builtin.pip:
-    name: ralph-malph[{{ ralph_packages | join(',') }}]
-    executable: /home/{{ ralph_user }}/pyenv/shims/pip
-  become_user: "{{ ralph_user }}"
-  become: true
+  include: install.yml
+
+- name: Configure Ralph
+  include: configure.yml
+
+- name: Create a new service
+  include: systemd.yml
