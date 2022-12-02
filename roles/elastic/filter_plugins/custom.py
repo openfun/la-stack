@@ -2,11 +2,10 @@ __author__ = "dale mcdiarmid"
 
 import re
 import os.path
-from six import string_types
 
 
 def modify_list(values=[], pattern="", replacement="", ignorecase=False):
-    """ Perform a `re.sub` on every item in the list"""
+    """Perform a `re.sub` on every item in the list"""
     if ignorecase:
         flags = re.I
     else:
