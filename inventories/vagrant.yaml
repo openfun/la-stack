@@ -1,51 +1,25 @@
-# This is an example inventory, feel free to modify it given your needs an
-# constraints.
-#
-# Note that host names should be resolvable DNS entries. If you don't have
-# permissions to modify those entries, feel free to add an `ansible_host` key
-# to each hosts entry, e.g.:
-#
-# hosts:
-#   la-stack-es-master-01:
-#     ansible_host: www.xxx.yyy.zzz
-#
 all:
-  # Common vars for all hosts
   vars:
-    ansible_user: root
+    ansible_user: vagrant
     debian_common_admin_user_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAcLMHQbGDsGDHQ90eV7Tt1/lm98b3hgjn1cFB9xKlNU julien.maupetit@fun-mooc.fr
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
-        # paste authorized ssh keys
 
   children:
-    # Elasticsearch nodes
-    elasticsearch:
-      children:
-        es-master-nodes:
-          hosts:
-            la-stack-es-master-01:
-              ansible_host: 212.47.247.104
-          vars:
-            es_config_host:
-              node.master: true
-              node.data: false
-        es-data-nodes:
-          hosts:
-            la-stack-es-data-01:
-              ansible_host: 51.158.69.130
-            la-stack-es-data-02:
-              ansible_host: 51.15.235.156
-          vars:
-            es_config_host:
-              node.master: false
-              node.data: true
+    elastic:
+      hosts:
+        la-stack-es-master-01:
+          ansible_host: 10.0.100.10
+        la-stack-es-data-01:
+          ansible_host: 10.0.100.20
+        la-stack-es-data-02:
+          ansible_host: 10.0.100.30
       vars:
-        firewall_allowed_ports: ["22", "9300", "9200"]
         es_config:
-          node.name: "{{ inventory_hostname }}"
+          node.name: "{{inventory_hostname}}"
           cluster.name: "test-cluster"
-          discovery.seed_hosts: "{{ hostvars[groups['es-master-nodes'][0]]['ansible_host'] }}:9300"
-          cluster.initial_master_nodes: "{{ hostvars[groups['es-master-nodes'][0]]['inventory_hostname'] }}"
+          discovery.seed_hosts: "{{ hostvars[groups['elastic'][0]]['ansible_host'] }}:9300"
+          cluster.initial_master_nodes: "la-stack-es-master-01"
           http.host: 0.0.0.0
           http.port: 9200
           transport.host: 0.0.0.0
@@ -54,18 +28,17 @@ all:
           xpack.security.authc.realms.file.file1.order: 0
           xpack.security.authc.realms.native.native1.order: 1
         es_heap_size: 1g
-        es_enable_http_ssl: true
-        es_enable_transport_ssl: true
-        es_ssl_keystore: "./elastic-tls/keystore/{{ inventory_hostname }}/{{ inventory_hostname }}.p12"
-        es_ssl_truststore: "./elastic-tls/my-ca.p12"
         es_api_basic_auth_username: "elastic"
         es_api_basic_auth_password: "changeme"
+        es_enable_http_ssl: true
+        es_enable_transport_ssl: true
+        es_ssl_keystore: "./elastic-tls/keystore/{{inventory_hostname}}/{{inventory_hostname}}.p12"
+        es_ssl_truststore: "./elastic-tls/my-ca.p12"
 
-    # Grafana servers
     grafana:
       hosts:
         la-stack-grafana-web-00:
-          ansible_host: 51.15.245.182
+          ansible_host: 10.0.150.10
       vars:
         firewall_allowed_ports: ["22", "3000"]
         grafana_security:
@@ -75,11 +48,13 @@ all:
           - name: Elastic
             type: elasticsearch
             access: proxy
-            database: "statements*"
-            url: "https://{{ hostvars[groups['es-master-nodes'][0]]['ansible_host'] }}:9200"
+            database: "statements"
+            url: "https://{{ hostvars[groups['elastic'][0]]['ansible_host'] }}:9200"
             basicAuth: true
             basicAuthUser: elastic
+            basicAuthPassword: changeme
             jsonData:
+              tlsSkipVerify: true
               esVersion: "7.17.0"
               timeField: "timestamp"
               tlsAuthWithCACert: true
@@ -105,20 +80,18 @@ all:
                 tiBTZNm7b+xGMQUtA/fSi+xq+QbU1cplp6idFTk2G8YZ/cDZrdLt7qcovG42KoyH
                 97vOenhNrPOEqup4IFWtk7XC/sWe5h0hqaaOeUE=
                 -----END CERTIFICATE-----
-              basicAuthPassword: changeme
 
-    # Ralph LRS servers
     ralph:
       hosts:
-        la-stack-ralph-00:
-          ansible_host: 51.15.134.12
+        ralph_0:
+          ansible_host: 10.0.200.10
       vars:
+        ralph_user: "vagrant"
         firewall_allowed_ports: ["22", "8000"]
         pyenv_owner: admin
         pyenv_virtualenvs:
           - venv_name: ralph_venv
             py_version: 3.9.15
-        ralph_user: ralph
         ralph_packages:
           - backend-es
           - cli

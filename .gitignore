@@ -14,3 +14,6 @@
 
 # Python
 venv/
+
+.vagrant
+debug.yaml
