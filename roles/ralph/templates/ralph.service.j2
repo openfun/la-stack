@@ -1,0 +1,13 @@
+[Unit]
+Description=Ralph Application Service
+After=network.target
+
+[Service]
+User={{ ralph_user }}
+WorkingDirectory={{ ralph_app_dir }}
+ExecStart={{ gunicorn_exec }} ralph.api:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

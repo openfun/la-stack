@@ -1,5 +1,8 @@
 ---
 ralph_user: "admin"
+ralph_app_dir: "/home/ralph/.ralph"
+
+gunicorn_exec: /home/{{ ralph_user }}/pyenv/shims/pip
 
 ralph_packages:
   - backend-es
@@ -9,3 +12,12 @@ ralph_packages:
   - backend-ws
   - cli
   - lrs
+
+ralph_lrs_auth:
+  - username: "johndoe"
+    hash: "$2b$12$iKUYWtRYSxAUf19DUvvh9O1NOzKMyjV2GrMBBqktdRUAJOYimWrRi"
+    scopes:
+      - "johndoe_scope"
+
+ralph_lrs_port: 80
+ralph_auth_file: "/var/run/ralph/auth.json"
