@@ -88,3 +88,9 @@ all:
         pyenv_virtualenvs:
           - venv_name: ralph_venv
             py_version: 3.9.15
+
+    superset:
+      hosts:
+        la-stack-superset-web-00:
+          ansible_host: 10.0.150.10
+      vars:
