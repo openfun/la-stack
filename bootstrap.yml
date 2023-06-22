@@ -26,6 +26,15 @@
 
 - name: Provision Ralph LRS
   hosts: ralph
+  become: true
   roles:
     - role: pyenv
     - role: ralph
+
+- name: Provision Apache Superset
+  hosts: superset
+  become: true
+  roles:
+    - role: pyenv
+    - role: postgresql
+    - role: superset

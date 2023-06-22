@@ -21,6 +21,11 @@ Vagrant.configure('2') do |config|
     grafana.vm.network 'private_network', ip: '10.0.150.10'
   end
 
+  config.vm.define 'superset' do |superset|
+    superset.vm.hostname = 'la-stack-superset-web-00'
+    superset.vm.network 'private_network', ip: '10.0.150.20'
+  end
+
   config.vm.define 'ralph' do |ralph|
     ralph.vm.hostname = 'la-stack-ralph-00'
     ralph.vm.network 'private_network', ip: '10.0.200.10'

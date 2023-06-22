@@ -88,7 +88,7 @@ all:
       vars:
         ralph_user: "vagrant"
         firewall_allowed_ports: ["22", "8000"]
-        pyenv_owner: admin
+        pyenv_owner: vagrant
         pyenv_virtualenvs:
           - venv_name: ralph_venv
             py_version: 3.9.15
@@ -103,4 +103,51 @@ all:
               - "johndoe_scope"
         ralph_lrs_port: 80
         ralph_auth_file: "/var/run/ralph/auth.json"
-        ralph_app_dir: "/home/ralph/.ralph"
+        ralph_app_dir: "/home/vagrant/.ralph"
+
+    superset:
+      hosts:
+        la-stack-superset-web-00:
+          ansible_host: 10.0.150.20
+      vars:
+        firewall_allowed_ports: ["22", "8000"]
+        pyenv_python_versions:
+          - 3.6.15
+        pyenv_global:
+          - 3.6.15
+        pyenv_owner: vagrant
+        pyenv_virtualenvs:
+          - venv_name: superset_venv
+            py_version: 3.6.15
+        postgresql_version: 9.6
+        postgresql_encoding: "UTF-8"
+        postgresql_locale: "en_US.UTF-8"
+        postgresql_ctype: "en_US.UTF-8"
+        postgresql_admin_user: "postgres"
+        postgresql_default_auth_method: "trust"
+        postgresql_service_enabled: True
+        superset_version: "0.29.0rc7"
+        superset_wtf_csrf_enabled: True
+        superset_wtf_csrf_time_limit: None
+        superset_workers: 8
+        superset_discover_server_name: "superset"
+        superset_enable_cors: True
+        superset_use_ketchup: True
+        superset_ketchup_version: "v0.1.0"
+        superset_load_examples: False
+        superset_auth_user_registration: True
+        superset_auth_user_registration_role: Admin
+        superset_public_role_like_gamma: True
+        superset_white_label: True
+        superset_white_label_use_base64: True
+        superset_white_label_use_filepaths: False
+        superset_additional_pip_packages:
+          ["pandas==0.23.4", "sqlalchemy==1.2.18", "ipdb"]
+        superset_install_additional_pip_packages: True
+        superset_add_custom_roles: True
+        superset_custom_roles: |
+          {
+            'Custom_Role_1': {'all_datasource_access'},
+            'Custom_Role_2': {'all_datasource_access', 'SQL Lab'}
+          }
+        superset_recreate_virtualenv: True
