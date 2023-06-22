@@ -1,0 +1,40 @@
+---
+- name: Ensure group "{{ debian_common_admin_user }}" exists
+  ansible.builtin.group:
+    name: "{{ debian_common_admin_user }}"
+    state: present
+
+- name: Add privileged admin user
+  user:
+    name: "{{ debian_common_admin_user }}"
+    comment: "Privileged admin user"
+    shell: /bin/bash
+    groups: sudo,{{ debian_common_admin_user }}
+    append: yes
+
+- name: Install sudo package
+  apt:
+    name: sudo
+    state: latest
+    update_cache: yes
+
+- name: Use sudo without password
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^%sudo ALL="
+    line: "%sudo ALL=(ALL) NOPASSWD: ALL"
+    validate: "visudo -cf %s"
+
+- name: Set history timestamps and size
+  blockinfile:
+    path: /etc/profile.d/bash_history.sh
+    block: |
+      HISTSIZE={{ debian_common_bash_history_histsize }}
+      HISTFILESIZE={{ debian_common_bash_history_histfilesize }}
+      HISTTIMEFORMAT={{ debian_common_bash_history_histtimeformat }}
+    state: present
+    create: true
+  when: debian_common_bash_history |bool
+
+- import_tasks: set-authorized-keys-admin.yml

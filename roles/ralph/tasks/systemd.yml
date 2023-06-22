@@ -1,0 +1,21 @@
+#
+# command to run:
+#
+# gunicorn ralph.api:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:80
+#
+---
+- name: Copy Ralph systemd service file
+  ansible.builtin.template:
+    src: ralph.service.j2
+    dest: /etc/systemd/system/ralph.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload systemd
+
+- name: Ensure Ralph service is enabled and running
+  ansible.builtin.systemd:
+    name: ralph
+    enabled: yes
+    state: started
+    daemon_reload: yes

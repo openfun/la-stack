@@ -1,0 +1,19 @@
+# OSX leaves these everywhere on SMB shares
+._*
+
+# OSX trash
+.DS_Store
+
+**/*.p12
+**/*.pem
+**/*.key
+**/*.crt
+**/*.csr
+**/keystore
+**/__pycache__
+
+# Python
+venv/
+
+.vagrant
+debug.yaml

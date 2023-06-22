@@ -1,0 +1,5 @@
+---
+- import_tasks: set-authorized-keys-admin.yml
+
+- import_tasks: set-authorized-keys-user.yml
+  when: debian_common_regular_user is defined

@@ -1,0 +1,329 @@
+# the pip version of superset to deploy
+superset_version: 0.34.0
+
+# installation options
+superset_install_from_git: false
+superset_git_url: https://github.com/apache/incubator-superset.git
+superset_package_name: apache-superset
+superset_start_command: run
+superset_additional_options: --with-threads
+superset_compile_assets: true
+
+# the python executable to install superset using
+superset_python_executable: "python3.6"
+
+# the application secret key
+superset_secret_key: REPLACE\2\1thisismyscretkey\1\2\e\y\y\h
+
+# available languages
+superset_languages:
+    - key: en
+      flag: us
+      name: English
+    - key: it
+      flag: it
+      name: Italian
+    - key: fr
+      flag: fr
+      name: French
+    - key: zh
+      flag: cn
+      name: Chinese
+    - key: ja
+      flag: jp
+      name: Japanese
+
+# web UI details
+superset_username: admin
+superset_firstname: Superset
+superset_lastname: Admin
+superset_email: techops+superset@ona.io
+superset_pass: REPLACEaVnwiLmc489m13
+
+# web application configuration
+superset_recreate_virtualenv: False
+superset_app: superset
+superset_port: 8888
+superset_mapbox_api_key: REPLACE
+superset_load_examples: true
+superset_allowed_extensions:
+  - csv
+superset_log_level: INFO
+
+# database credentials
+superset_postgres_db_host: localhost
+superset_postgres_db_port: 5432
+superset_postgres_db_name: superset
+superset_postgres_db_user: superset
+superset_postgres_db_pass: REPLACEHS&y7834yKDSd
+superset_pgpass_credentials: []
+superset_database_server_url: "postgresql://{{ superset_postgres_db_user }}:{{ superset_postgres_db_pass }}@{{ superset_postgres_db_host }}:{{ superset_postgres_db_port }}/{{ superset_postgres_db_name }}"
+
+# whether to check if the superset service is running
+superset_check_if_running: True
+
+# whether to restart superset after making changes; default is True, for a cluster you may wish to disable
+superset_perform_restart: True
+
+# whether to force a restart, useful if another role has made changes (such as updating a custom nar); default is False
+superset_force_restart: False
+
+# authentication configuration
+superset_auth_type: AUTH_DB
+superset_oauth_providers:
+superset_service_env_vars:
+# allow user self registration
+superset_auth_user_registration: False
+# default role when user self registers
+superset_auth_user_registration_role: Public
+# set public role like gamma
+superset_public_role_like_gamma: False
+
+# white labelling
+superset_white_label: False
+superset_white_label_use_base64: False
+superset_white_label_use_filepaths: False
+
+# base64 encoded superset branding images
+superset_favicon_base64:
+superset_logo_base64:
+superset_2x_logo_base64:
+superset_2x_logo_filename: "superset-logo@2x.png"
+
+# file paths to superset branding images
+superset_favicon_path:
+superset_logo_path:
+superset_2x_logo_path:
+superset_app_name: "Superset"
+# Set to true if you'd want the role to login to PostgreSQL using the provided
+# credentials instead as using the default authentication mechanism (sudo'ing to
+# the prostgres user)
+superset_postgres_login: true
+superset_postgres_login_user: "postgres"
+superset_postgres_login_password: ""
+
+# upload directories
+superset_upload_dir: "{{ superset_home }}/uploads/"
+superset_img_upload_dir: "{{ superset_home }}/images/"
+
+# config path
+superset_config_module_path: "{{ superset_codebase_path }}/superset_config.py"
+
+# Allow for javascript controls components
+# this enables programmers to customize certain charts (like the
+# geospatial ones) by inputing javascript in controls. This exposes
+# an XSS security vulnerability
+superset_enable_javascript_controls: False
+
+# cors
+superset_enable_cors: False
+# CORS options
+# needs to be set as a Python dictionary, like so:
+# superset_cors_options: |
+#   {
+#      "origins": "*",
+#      "methods": "GET",
+#      "allow_headers": "Custom-Api-Token",
+#      "supports_credentials": True
+#   }
+superset_cors_options:
+
+# HTTP headers
+# needs to be set as a Python dictionary, like so:
+# superset_http_headers: |
+#   {
+#     'X-Frame-Options': 'SAMEORIGIN'
+#   }
+superset_http_headers:
+# Prevent cookie from being read by frontend JS?
+superset_session_cookie_httponly: False
+# Prevent cookie from being transmitted over non-tls?
+superset_session_cookie_secure: True
+superset_session_cookie_samesite: "None"  # One of [None, 'Lax', 'Strict']
+
+# Extract and use X-Forwarded-For/X-Forwarded-Proto headers?
+superset_enable_proxy_fix: False
+
+# additional python packages installed after Superset is installed
+superset_additional_pip_packages: []
+superset_install_additional_pip_packages: False
+
+# superset patchup (ketchup)
+superset_use_ketchup: False
+superset_ketchup_git_url: "https://github.com/onaio/superset-patchup.git"
+superset_ketchup_version: "master"
+
+# Add custom superset roles
+superset_add_custom_roles: False
+# This needs to be a Python dictionary defined like so:
+# superset_custom_roles: |
+#   {
+#     'Custom_Role_1': {'all_datasource_access'},
+#     'Custom_Role_2': {'all_datasource_access', 'SQL Lab'},
+#     'ROLE_NAME': {'PERMISSION1', 'PERMISSION2'}
+#   }
+superset_custom_roles:
+
+# PATCHUP_EMAIL_BASE
+# this is used for OAuth providers whose users do not have an email address
+# superset requires an email address and so we need to provide it
+# the email base should be a string e.g. superset@example.com
+# we then use it to construct email addresses for the user logging in
+# that look like superset+username@example.com (if the base was as set above)
+superset_patchup_email_base:
+
+# Configure superset caching
+superset_enable_cache: False
+superset_results_key_prefix: superset_results
+superset_cache_config: |-
+  {
+    'CACHE_TYPE': 'redis',
+    'CACHE_KEY_PREFIX': '{{ superset_results_key_prefix }}',
+    'CACHE_REDIS_URL': 'redis://localhost:6379/0'
+  }
+superset_cache_default_timeout: 60 * 60 * 24  # 1 day
+
+superset_enable_tables_name_cache: "{{ superset_enable_cache }}"
+superset_table_names_key_prefix: superset_table_names
+superset_table_names_cache_config: |-
+  {
+    'CACHE_TYPE': 'redis',
+    'CACHE_KEY_PREFIX': '{{ superset_table_names_key_prefix }}',
+    'CACHE_REDIS_URL': 'redis://localhost:6379/0'
+  }
+
+superset_enable_thumbnail_cache: False
+superset_thumbnail_cache_config: |-
+  {
+    'CACHE_TYPE': 'null',
+    'CACHE_NO_NULL_WARNING': True,
+  }
+
+# Enable compression on Flask responses with gzip. Use python True or False
+# values.
+superset_enable_compression: False
+
+superset_webserver_timeout: 60
+
+# celery
+superset_broker_host: localhost
+superset_broker_port: 6379
+superset_broker_protocol: redis
+superset_broker_url: "{{ superset_broker_protocol }}://{{ superset_broker_host }}:{{ superset_broker_port }}/0"
+superset_celery_annotations: |-
+    {
+        'sql_lab.get_sql_results': {
+            'rate_limit': '100/s',
+        },
+    }
+
+superset_celery_app: "superset.tasks.celery_app:app"
+superset_celeryd_nodes: "{{ superset_service_name }}"
+superset_celeryd_service_name: "celeryd-{{ superset_service_name }}"
+superset_celerybeat_service_name: "celerybeat-{{ superset_service_name }}"
+superset_celeryd_opts: "--pool=gevent -Ofair --concurrency=4"
+superset_celeryd_log_level: INFO
+superset_celerybeat_log_level: INFO
+superset_celeryd_pid_directory: "/run/celery-{{ superset_user }}"
+superset_celeryd_pid_file: "{{ superset_celeryd_pid_directory }}/%n.pid"
+superset_celery_beat_pid_directory: "/var/run/{{ superset_user }}"
+superset_celery_beat_pid_file: "{{ superset_celery_beat_pid_directory }}/celerybeat.pid"
+superset_celeryd_extra_env_vars: []
+superset_celerybeat_extra_env_vars: []
+superset_celery_imports: |-
+    (
+        'superset.sql_lab',
+    )
+
+superset_enable_celery: True
+
+# Configure superset celery task cache warmup
+superset_enable_celerybeat: True
+superset_celerybeat_schedule: |-
+    {
+        'cache-warmup-hourly': {
+            'task': 'cache-warmup',
+            'schedule': crontab(minute=0, hour='*'),  # hourly
+            'kwargs': {
+                'strategy_name': 'top_n_dashboards',
+                'top_n': 5,
+                'since': '7 days ago',
+            },
+        },
+    }
+
+superset_apt_dependencies_packages: ["build-essential", "libssl-dev", "libffi-dev", "libsasl2-dev", "libldap2-dev", "libmysqlclient-dev", "python3-pip", "python3-psycopg2", "libpq-dev", "libpcre3", "libpcre3-dev"]
+superset_pip_dependencies_packages: ["setuptools", "psycopg2-binary", "mysql", "Flask-OAuthlib", "uwsgi", "gevent", "redis"]
+
+# Roles created by superset
+superset_robot_permission_roles: ['Public', 'Gamma', 'Alpha', 'Admin', 'sql_lab']
+
+# Configure superset dashboard position json data limit
+superset_dashboard_position_data_limit: 65535
+
+superset_virtualenv_path: "{{ superset_home }}/.virtualenvs/{{ superset_user }}"
+superset_python_path: "{{ superset_virtualenv_path }}/lib/{{ superset_python_executable }}"
+superset_base_path: "{{ superset_python_path }}/site-packages/superset"
+
+# superser uwsgi log path
+superset_service_name: "superset"
+superset_log_path: "/var/log/{{ superset_service_name }}"
+superset_pid_sock_dir: "/var/run/{{ superset_service_name }}"
+
+# uwsgi configs
+superset_flask_env: "production"
+superset_wsgi_http:
+superset_wsgi_socket: "{{ superset_pid_sock_dir }}/superset.sock"
+superset_wsgi_group: "www-data"
+superset_wsgi_chmod_socket: "664"
+superset_codebase_path: "{{ superset_home }}/app"
+superset_wsgi_master: True
+superset_wsgi_processes: "5"
+superset_pid_file: "{{ superset_pid_sock_dir }}/superset.pid"
+superset_wsgi_vacuum: True
+superset_wsgi_max_requests: "100"
+superset_wsgi_logto: "{{ superset_log_path }}/uwsgi_superset.log"
+superset_wsgi_static_map: ""
+superset_wsgi_buffer_size: "8192"
+superset_reload_on_rss: "325"
+superset_wsgi_module: "superset.app:create_app()"
+superset_mount: "/={{ superset_user }}:app"
+superset_manage_script_name: True
+superset_wsgi_env:
+  - "HTTPS=on"
+  - "FLASK=superset"
+  - "FLASK_ENV={{ superset_flask_env }}"
+superset_wsgi_stats: "{{ superset_pid_sock_dir }}/superset.stats.sock"
+superset_wsgi_enable_threads: False
+superset_wsgi_memory_report: False
+superset_wsgi_single_interpreter: True
+superset_wsgi_thunder_lock: False
+
+# local npm build
+superset_local_build_npm_dir: "/usr/bin"
+superset_local_build_npm_args: "--max-old-space-size=1024"
+superset_local_build_directory: "/tmp/{{ superset_local_build_user }}/superset/{{ superset_version }}"
+superset_local_build_user: "{{ lookup('env', 'USER') }}"
+superset_local_build_assets_directory: "{{ superset_local_build_directory }}/superset-frontend"
+superset_additional_npm_packages: []
+
+# sentry
+superset_sentry_dsn:
+
+# Superset patches to be applied when compiling superset-frontend, see files/patches.
+# Example:
+# superset_patches: ["0.36.0-laos.patch"]
+superset_patches: []
+
+# recaptcha
+superset_recaptcha_public_key:
+superset_recaptcha_private_key:
+
+# email
+superset_mail_server:
+superset_mail_port:
+superset_mail_use_tls: "False"
+superset_mail_use_ssl: "False"
+superset_mail_username:
+superset_mail_password:
+superset_mail_default_sender: "None"

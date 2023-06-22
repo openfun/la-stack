@@ -1,0 +1,9 @@
+---
+- name: Install Ralph
+  include: install.yml
+
+- name: Configure Ralph
+  include: configure.yml
+
+- name: Create a new service
+  include: systemd.yml

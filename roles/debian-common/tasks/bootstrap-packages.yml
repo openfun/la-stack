@@ -1,0 +1,11 @@
+---
+- name: Update package cache and upgrade packages
+  apt:
+    upgrade: dist
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install extra packages
+  apt:
+    name: "{{ debian_common_extra_packages | union(debian_common_supplementary_packages) }}"
+    state: latest

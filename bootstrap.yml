@@ -1,0 +1,40 @@
+---
+- name: Install Debian common on all the servers
+  hosts: all
+  roles:
+    - role: debian-common
+      prebootstrap: true
+      become: true
+    - role: debian-common
+      bootstrap: true
+      add_remove_keys: true
+
+- name: Provision Elasticsearch Master nodes
+  hosts: es-master-nodes
+  roles:
+    - role: elastic
+
+- name: Provision Elasticsearch Data nodes
+  hosts: es-data-nodes
+  roles:
+    - role: elastic
+
+- name: Provision Grafana
+  hosts: grafana
+  roles:
+    - role: grafana
+
+- name: Provision Ralph LRS
+  hosts: ralph
+  become: true
+  roles:
+    - role: pyenv
+    - role: ralph
+
+- name: Provision Apache Superset
+  hosts: superset
+  become: true
+  roles:
+    - role: pyenv
+    - role: postgresql
+    - role: superset

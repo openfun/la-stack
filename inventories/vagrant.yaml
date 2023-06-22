@@ -1,0 +1,153 @@
+all:
+  vars:
+    ansible_user: vagrant
+    debian_common_admin_user_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAcLMHQbGDsGDHQ90eV7Tt1/lm98b3hgjn1cFB9xKlNU julien.maupetit@fun-mooc.fr
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMDwryfdeKGbVeC+jMB5VjGLa8X6ai9S3dThl9fATjxewOJoF8rkwCTMNqs056JyMAUungSJsoEfLDMzTwt4tDHyNf4jNiIRhAuvjjyzkV1UlNI1UsGrxUFFWNQuQEO5CpomMzspmhyfeej6RiTzN+D+4le59d/0jg/LABnVDbrbCXbiUmQALGrAhlxfDji5gahirnCGVthz5SwB/SsafWHL64aWV4MF7yZVCUwyAw1LU3ei3vd1yPKculzFnTY8SEeMJlapPWMDOfZp82Wzrj6WKaD8DWoMzGTGIduM28bMQgi7PDhp4ozUlCBzbMGgsE6g48TeE7L8S2N3rNtK3oftaXDH4Lo1fAcATD6JRiuKj/d79Dh/jIBoYrwxNu6dPFIFYpW7Qz2SzRfeGKiHuv+h9aX6N/7/mEykkFrD3XswJBnd4ybi1HZGiJdkewBbiOJnwoJiYcTIQpc2Qt8X1E59uHvWLEVFKffo7H67VrNSjiGrW1wb/nLFIsbHHol3bolBkcUVb3IO8VsxI869J8v29TZ1VL2etnWpepdzYHDhKwON5ub62czPvH9hn/iDKBxdPaxWFJiW6l8GlKWbcXCjWe2PiSk/cAaRSJfKqkP87gGJJm5FWEwKQ5TLkpv7n4fMTM5OydbjDAEaNsfyaGTf9ZFMHMLUJaN3Qjnstupw== wael@arkops.io
+
+  children:
+    elastic:
+      hosts:
+        la-stack-es-master-01:
+          ansible_host: 10.0.100.10
+        la-stack-es-data-01:
+          ansible_host: 10.0.100.20
+        la-stack-es-data-02:
+          ansible_host: 10.0.100.30
+      vars:
+        es_config:
+          node.name: "{{inventory_hostname}}"
+          cluster.name: "test-cluster"
+          discovery.seed_hosts: "{{ hostvars[groups['elastic'][0]]['ansible_host'] }}:9300"
+          cluster.initial_master_nodes: "la-stack-es-master-01"
+          http.host: 0.0.0.0
+          http.port: 9200
+          transport.host: 0.0.0.0
+          transport.port: 9300
+          bootstrap.memory_lock: true
+          xpack.security.authc.realms.file.file1.order: 0
+          xpack.security.authc.realms.native.native1.order: 1
+        es_heap_size: 1g
+        es_api_basic_auth_username: "elastic"
+        es_api_basic_auth_password: "changeme"
+        es_enable_http_ssl: true
+        es_enable_transport_ssl: true
+        es_ssl_keystore: "./elastic-tls/keystore/{{inventory_hostname}}/{{inventory_hostname}}.p12"
+        es_ssl_truststore: "./elastic-tls/my-ca.p12"
+
+    grafana:
+      hosts:
+        la-stack-grafana-web-00:
+          ansible_host: 10.0.150.10
+      vars:
+        firewall_allowed_ports: ["22", "3000"]
+        grafana_security:
+          admin_user: admin
+          admin_password: "changeme"
+        grafana_datasources:
+          - name: Elastic
+            type: elasticsearch
+            access: proxy
+            database: "statements"
+            url: "https://{{ hostvars[groups['elastic'][0]]['ansible_host'] }}:9200"
+            basicAuth: true
+            basicAuthUser: elastic
+            basicAuthPassword: changeme
+            jsonData:
+              tlsSkipVerify: true
+              esVersion: "7.17.0"
+              timeField: "timestamp"
+              tlsAuthWithCACert: true
+            secureJsonData:
+              tlsCACert: |
+                -----BEGIN CERTIFICATE-----
+                MIIDSTCCAjGgAwIBAgIUQpvZkPRAS0W0cbqhViaFN0IUUnswDQYJKoZIhvcNAQEL
+                BQAwNDEyMDAGA1UEAxMpRWxhc3RpYyBDZXJ0aWZpY2F0ZSBUb29sIEF1dG9nZW5l
+                cmF0ZWQgQ0EwHhcNMjIxMjAyMTUyNjAwWhcNMjUxMjAxMTUyNjAwWjA0MTIwMAYD
+                VQQDEylFbGFzdGljIENlcnRpZmljYXRlIFRvb2wgQXV0b2dlbmVyYXRlZCBDQTCC
+                ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALMG1HEmxxOWisYwl/NObKvW
+                Glx/pMkPz3QNrgp0lZQniSTxIU+Ivw+uvq0awCzhtn+7t4N5Begs4VY4bFX3fPvP
+                xfpuEqnKC56YsGCJx7ml7UkjbgvkFv+MHEzHIS39QBuGaOshNHt53C1KMG/Ou+Gn
+                odIOW7NweKxHjCDcNPw0ijYAxjxfh2eQdaKgU+4hjy4vkRqTUPwRt5ZDFUY/gFpk
+                Lv+n6j2kAw3/JKGa4kaTSocYR0VUQKywsNXKujRi0CxMpNlS+zDKzvF12keLrs0h
+                UEoZXTQqJ3oEp6KnJCAT7nPgWHRxdPE9Z6CG1vpjb+vR2UUbFZZycsPxroT+ZaUC
+                AwEAAaNTMFEwHQYDVR0OBBYEFEAXyyFbPeqU3S4C2KSht6JVvxKIMB8GA1UdIwQY
+                MBaAFEAXyyFbPeqU3S4C2KSht6JVvxKIMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZI
+                hvcNAQELBQADggEBAAsJuL7/T0jFuJTvBL2FxDwTfRzo0FhuGbmqOebyP1tFwlFD
+                kHgN+YQooZQki6qacIRf1kOBqYolY9UNOKc7GqxPXfyeNquJ4L3laNxKmbF+Co2g
+                QrI+3B0umXxBXOV7SBi5ULNDJFe6k0dmJe54hMvKcbTEEwZJkyc1xdtAp6Y3pTJ0
+                LasNm/Gy/9arFNVZACXq6lZl2UJO5A/bQ39t/bGxwGU6U5g4kDqDr9rwMLCPFow6
+                tiBTZNm7b+xGMQUtA/fSi+xq+QbU1cplp6idFTk2G8YZ/cDZrdLt7qcovG42KoyH
+                97vOenhNrPOEqup4IFWtk7XC/sWe5h0hqaaOeUE=
+                -----END CERTIFICATE-----
+
+    ralph:
+      hosts:
+        ralph_0:
+          ansible_host: 10.0.200.10
+      vars:
+        ralph_user: "vagrant"
+        firewall_allowed_ports: ["22", "8000"]
+        pyenv_owner: vagrant
+        pyenv_virtualenvs:
+          - venv_name: ralph_venv
+            py_version: 3.9.15
+        ralph_packages:
+          - backend-es
+          - cli
+          - lrs
+        ralph_lrs_auth:
+          - username: "johndoe"
+            hash: "$2b$12$iKUYWtRYSxAUf19DUvvh9O1NOzKMyjV2GrMBBqktdRUAJOYimWrRi"
+            scopes:
+              - "johndoe_scope"
+        ralph_lrs_port: 80
+        ralph_auth_file: "/var/run/ralph/auth.json"
+        ralph_app_dir: "/home/vagrant/.ralph"
+
+    superset:
+      hosts:
+        la-stack-superset-web-00:
+          ansible_host: 10.0.150.20
+      vars:
+        firewall_allowed_ports: ["22", "8000"]
+        pyenv_python_versions:
+          - 3.6.15
+        pyenv_global:
+          - 3.6.15
+        pyenv_owner: vagrant
+        pyenv_virtualenvs:
+          - venv_name: superset_venv
+            py_version: 3.6.15
+        postgresql_version: 9.6
+        postgresql_encoding: "UTF-8"
+        postgresql_locale: "en_US.UTF-8"
+        postgresql_ctype: "en_US.UTF-8"
+        postgresql_admin_user: "postgres"
+        postgresql_default_auth_method: "trust"
+        postgresql_service_enabled: True
+        superset_version: "0.29.0rc7"
+        superset_wtf_csrf_enabled: True
+        superset_wtf_csrf_time_limit: None
+        superset_workers: 8
+        superset_discover_server_name: "superset"
+        superset_enable_cors: True
+        superset_use_ketchup: True
+        superset_ketchup_version: "v0.1.0"
+        superset_load_examples: False
+        superset_auth_user_registration: True
+        superset_auth_user_registration_role: Admin
+        superset_public_role_like_gamma: True
+        superset_white_label: True
+        superset_white_label_use_base64: True
+        superset_white_label_use_filepaths: False
+        superset_additional_pip_packages:
+          ["pandas==0.23.4", "sqlalchemy==1.2.18", "ipdb"]
+        superset_install_additional_pip_packages: True
+        superset_add_custom_roles: True
+        superset_custom_roles: |
+          {
+            'Custom_Role_1': {'all_datasource_access'},
+            'Custom_Role_2': {'all_datasource_access', 'SQL Lab'}
+          }
+        superset_recreate_virtualenv: True

@@ -1,0 +1,14 @@
+---
+- name: Ensure Ralph user exists
+  ansible.builtin.user:
+    name: "{{ ralph_user }}"
+    system: yes
+    state: present
+
+- name: Ensure Ralph application directory exists
+  ansible.builtin.file:
+    path: "{{ ralph_app_dir }}"
+    state: directory
+    owner: "{{ ralph_user }}"
+    mode: "0755"
+# - name: Create the LRS auth file

@@ -1,0 +1,80 @@
+---
+- name: Clone superset repository locally.
+  become: true
+  become_user: "{{ superset_local_build_user }}"
+  git:
+    accept_hostkey: "yes"
+    repo: "{{ superset_git_url }}"
+    version: "{{ superset_version }}"
+    dest: "{{ superset_local_build_directory }}"
+    force: yes
+    depth: "1"
+  delegate_to: "127.0.0.1"
+  when: superset_install_from_git|bool
+
+- name: Patch superset
+  become: true
+  become_user: "{{ superset_local_build_user }}"
+  patch:
+    src: "patches/{{ item }}"
+    basedir: "{{ superset_local_build_directory }}"
+    strip: 1
+  delegate_to: "127.0.0.1"
+  with_items: "{{ superset_patches }}"
+  when: superset_patches|length > 0
+
+- name: Install javascript dependencies
+  become: true
+  become_user: "{{ superset_local_build_user }}"
+  npm:
+    ci: true
+    path: "{{ superset_local_build_assets_directory }}"
+    executable: "{{ superset_local_build_npm_dir }}/npm"
+  delegate_to: "127.0.0.1"
+  environment:
+    PATH: "{{ superset_local_build_npm_dir }}:{{ lookup('env', 'PATH') }}"
+  when: superset_install_from_git|bool
+
+- name: Install additional/overwrite javascript dependencies
+  become: true
+  become_user: "{{ superset_local_build_user }}"
+  npm:
+    executable: "{{ superset_local_build_npm_dir }}/npm"
+    name: "{{ item.name }}"
+    path: "{{ superset_local_build_assets_directory }}"
+    registry: "{{ item.registry }}"
+  delegate_to: "127.0.0.1"
+  environment:
+    PATH: "{{ superset_local_build_npm_dir }}:{{ lookup('env', 'PATH') }}"
+  with_items: "{{ superset_additional_npm_packages }}"
+  when: superset_install_from_git|bool and superset_additional_npm_packages|length > 0
+
+- name: Compile javascript
+  become: true
+  become_user: "{{ superset_local_build_user }}"
+  command: "{{ superset_local_build_npm_dir }}/npm run build {{ superset_local_build_npm_args }}"
+  args:
+    chdir: "{{ superset_local_build_assets_directory }}"
+  environment:
+    PATH: "{{ superset_local_build_npm_dir }}:{{ lookup('env', 'PATH') }}"
+  delegate_to: "127.0.0.1"
+  when: superset_install_from_git|bool
+
+- name: Compress dist directory
+  become: true
+  become_user: "{{ superset_local_build_user }}"
+  archive:
+    path: "{{ superset_local_build_directory }}/superset/static/assets"
+    dest: "{{ superset_local_build_assets_directory }}/dist.tgz"
+  delegate_to: "127.0.0.1"
+  when: superset_install_from_git|bool
+
+- name: UnCompress dist directory
+  become: true
+  become_user: "{{ superset_user }}"
+  unarchive:
+    src: "{{ superset_local_build_assets_directory }}/dist.tgz"
+    dest: "{{ superset_base_path }}/static"
+  when: superset_install_from_git|bool
+  notify:
+    - restart superset
